@@ -1,0 +1,120 @@
+<div id="wrapper">
+  <div id="splitter">
+    <div id="left">
+      <div class="inner">
+        <h3>Create</h3>
+        <dl>
+          <dt>Name:</dt>
+          <dd><input type="text" id="create-name" /></dd>
+          <dt>Description</dt>
+          <dd><textarea rows="5" cols="20" id="create-description"></textarea></dd>
+          <dd><button id="create-weapon">Create</button></dd>
+        </dl>
+      </div>
+    </div>
+    <div id="middle">
+      <div id="right-top">
+        <div class="inner">
+          <div id="grid">
+              <table id="weapons">
+                <tr>
+                  <th data-field="name">Name</th>
+                  <th data-field="description">Description</th>
+                </tr>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="right">
+      <h3>Edit</h3>
+      <dl>
+        <dt>Name:</dt>
+        <dd><input type="text" id="change-name" /></dd>
+        <dt>Description</dt>
+        <dd><textarea rows="5" cols="20" id="change-description"></textarea></dd>
+        <dd>
+          <span>
+            <button id="update-weapon">Update</button>
+            <button id="delete-weapon">Delete</button>
+          </span>
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $("#splitter").kendoSplitter({
+      panes: [
+        { collapsible: false },
+        { collapsible: false },
+        { collapsible: false }
+      ]
+    });
+
+    var Weapon = kendo.data.Model.define({
+      id: "id"
+    });
+
+    var dataSource = new kendo.data.DataSource({
+      transport: {
+        read: {
+          url: "/weapons.json"
+        },
+        create: {
+          url: "/weapons.json",
+          type: "POST"
+        },
+        update: {
+          type: "PUT"
+        },
+        destroy: {
+          type: "DELETE"
+        }
+      },
+      schema: {
+        model: Weapon
+      }
+    });
+
+    var selectedWeapon;
+
+    $('#weapons').kendoGrid({
+      dataSource: dataSource,
+      selectable: true,
+      change: function() {
+        var id = this.select().data("uid");
+        selectedWeapon = this.dataSource.getByUid(id);
+
+        this.dataSource.options.transport.destroy.url = "/weapons.json/" + selectedWeapon.id;
+        this.dataSource.options.transport.update.url = "/weapons.json/" + selectedWeapon.id;
+
+        $("#change-name").val(selectedWeapon.get("name"));
+        $("#change-description").val(selectedWeapon.get("description"));
+      }
+    });
+
+    $("#create-weapon").click(function () {
+      dataSource.add({ name: $("#create-name").val(), description: $("#create-description").val() });
+      dataSource.sync();
+      $("#create-name").val('');
+      $("#create-description").val('');
+      dataSource.read();
+    });
+
+    $("#update-weapon").click(function () {
+      selectedWeapon.set("name", $("#change-name").val());
+      selectedWeapon.set("description", $("#change-description").val());
+      dataSource.sync();
+    });
+
+    $("#delete-weapon").click(function () {
+      dataSource.remove(selectedWeapon);
+      $("#change-name").val("");
+      $("#change-description").val("");
+      dataSource.sync();
+    });
+  });
+</script>
