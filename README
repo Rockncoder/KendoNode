@@ -1,1 +1,21 @@
-This file was created by JetBrains WebStorm 6.0.2 for binding GitHub repository
+
+A few days ago I came across a video showing interfacing a KendoUI DataSource with a RESTful backend.
+
+http://www.telerik.com/support/videos/asp-net-mvc-videos/get-started-with-the-kendo-ui-datasource.aspx
+
+Only problem was that the author of the video left out some parts of how the app was built. So I decided
+to work out the missing bits on my own. This is a demo project to show how to combine a Node/Express
+RESTful backend with a KendoUI frontend.
+
+In place of a proper database this app uses a JavaScript object, this is a demo after all.
+There is very little data checking going on here, so be careful.
+
+I am not a huge fan of Jade, so I used HBS instead. HBS allows me to use Handlerbars on the server side.
+Frankly the app doesn't use templates much and everything could have been done with straight HTML, but I
+am probably going to expand the app in the future.
+
+Future additions?:
+  MongoDB database
+  Backbone.js front-end
+
+
